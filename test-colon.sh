@@ -1,7 +1,8 @@
 # test-colon.sh
 #
 # Provides a bash function literally called 'test:' that takes a test
-# description string and wraps POSIX 'test' in some pretty colors and output.
+# description string and a bash conditional, evaluates the conditional, and
+# gives some pretty output.
 
 function test:() {
   local red=''
@@ -18,7 +19,9 @@ function test:() {
   local -r test_file="${BASH_SOURCE[1]}"
   local -r test_line="${BASH_LINENO[0]}"
   shift
-  if test "$@"; then
+
+  eval "if $@; then true; else false; fi"
+  if [[ $? = 0 ]]; then
     echo "${green}PASSED: ${test_text}${reset}"
     return 0
   else
@@ -45,7 +48,7 @@ function test:() {
     fi
     echo ""
     echo "Evaluated to:"
-    echo "  test $@"
+    echo "  $@"
     echo "${reset}"
     return 1
   fi
