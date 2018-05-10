@@ -23,14 +23,25 @@ function test:() {
     return 0
   else
     printf "${red}FAILED"
-    if [[ ${test_file} ]]; then
+    #
+    #  If we're executing this from a prompt, ${BASH_SOURCE[1]} is empty.
+    #
+    #  In this case, we don't care to print out the executed code because the
+    #  user literally just entered it.
+    #
+    #  Otherwise, in order to grab the command that was executed, we spin up a
+    #  second instance of bash where we'll pipe the script from the test
+    #  command onward, injecting a DEBUG trap to ensure that the command never
+    #  executes but that it does print.
+    #
+    if [[ -z "${test_file}" ]]; then
+      printf "\n"
+    else
       printf ": (${test_file}:${test_line})\n"
       {
         echo "trap 'printf -- \"--> \${BASH_COMMAND}\n\" && exit' DEBUG"
         tail -n +${test_line} ${test_file}
       } | /bin/bash
-    else
-      printf "\n"
     fi
     echo ""
     echo "Evaluated to:"
