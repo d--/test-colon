@@ -42,7 +42,7 @@ function test:() {
     else
       printf ": (${test_file}:${test_line})\n"
       {
-        echo "trap 'printf -- \"--> \${BASH_COMMAND}\n\" && exit' DEBUG"
+        echo "trap 'printf -- \"--> \${BASH_COMMAND}\n\"; exit' DEBUG"
         tail -n +${test_line} ${test_file}
       } | /bin/bash
     fi
